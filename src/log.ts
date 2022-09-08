@@ -8,8 +8,8 @@ enum Log {
 
 class Logger {
   devMode: boolean = false;
-  logFile: string = "/tmp/sharecat_log.txt";
-  errFile: string = "/tmp/sharecat_err.txt";
+  logFile: string = "/tmp/sharekitten_log.txt";
+  errFile: string = "/tmp/sharekitten_err.txt";
 
   msg(s: string) {
     console.log(`[MSG] ${s}`);

@@ -1,6 +1,6 @@
 {
-  "name": "express-server",
-  "version": "1.0.0",
+  "name": "sharekitten",
+  "version": "0.0.1",
   "main": "dist/app.js",
   "license": "MIT",
   "scripts": {

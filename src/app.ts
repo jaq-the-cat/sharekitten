@@ -29,5 +29,5 @@ app.post("/submit", (req, res) => {
 
 const PORT = config.PORT;
 app.listen(PORT, () => {
-  log.msg(`sharecat running on ${PORT}`);
+  log.msg(`sharekitten running on ${PORT}`);
 });
