@@ -13,8 +13,8 @@ var Log;
 class Logger {
     constructor() {
         this.devMode = false;
-        this.logFile = "/tmp/sharecat_log.txt";
-        this.errFile = "/tmp/sharecat_err.txt";
+        this.logFile = "/tmp/sharekitten_log.txt";
+        this.errFile = "/tmp/sharekitten_err.txt";
     }
     msg(s) {
         console.log(`[MSG] ${s}`);
