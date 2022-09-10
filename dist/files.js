@@ -33,7 +33,7 @@ class Files {
     save(filename, isPublic) {
         return __awaiter(this, void 0, void 0, function* () {
             const id = (0, uuid_1.v4)();
-            (yield db).run("INSERT INTO files VALUES (?, ?, ?)", [id, filename, isPublic]);
+            (yield db).run("INSERT INTO files VALUES (?, ?, ?)", [id, filename, isPublic ? 1 : 0]);
             return id;
         });
     }
@@ -43,6 +43,11 @@ class Files {
             if (results && results[0])
                 return results[0].filename;
             return null;
+        });
+    }
+    all() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield db).all("SELECT * FROM files");
         });
     }
     clear() {

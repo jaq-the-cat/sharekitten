@@ -71,6 +71,11 @@ exports.app.get("/upload/:id", (req, res) => __awaiter(void 0, void 0, void 0, f
     log_1.default.warn(`COULDN'T FIND ${req.params.id}`);
     res.redirect(`/upload/nofile?id=${req.params.id}`);
 }));
+exports.app.get("/uploads", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.render("publicfiles", {
+        files: yield files_1.default.all(),
+    });
+}));
 exports.app.post("/upload", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.files || !('upload' in req.files)) {
         log_1.default.warn("NO FILES");

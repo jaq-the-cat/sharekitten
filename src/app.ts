@@ -64,6 +64,12 @@ app.get("/upload/:id", async (req, res) => {
   res.redirect(`/upload/nofile?id=${req.params.id}`);
 });
 
+app.get("/uploads", async (req, res) => {
+  res.render("publicfiles", {
+    files: await files.all(),
+  });
+});
+
 app.post("/upload", async (req, res) => {
   if (!req.files || !('upload' in req.files)) {
     log.warn("NO FILES");

@@ -20,7 +20,7 @@ class Files {
 
   async save(filename: string, isPublic: boolean): Promise<string> {
     const id = uuidv4();
-    (await db).run("INSERT INTO files VALUES (?, ?, ?)", [id, filename, isPublic]);
+    (await db).run("INSERT INTO files VALUES (?, ?, ?)", [id, filename, isPublic ? 1 : 0]);
     return id;
   }
 
@@ -29,6 +29,10 @@ class Files {
     if (results && results[0])
       return results[0].filename;
     return null;
+  }
+
+  async all(): Promise<any[]> {
+    return (await db).all("SELECT * FROM files");
   }
 
   async clear(): Promise<void> {
