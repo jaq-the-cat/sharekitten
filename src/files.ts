@@ -9,11 +9,11 @@ let db = open({
   driver: sqlite3.Database,
 });
 
-export async function initdb() {
-  (await db).run("CREATE TABLE files (id text, filename text)");
-}
-
 class Files {
+  async init() {
+    (await db).run("DROP TABLE IF EXISTS files; CREATE TABLE files (id text, filename text)");
+  }
+
   async save(filename: string): Promise<string> {
     const id = uuidv4();
     (await db).run("INSERT INTO files VALUES (?, ?)", [id, filename]);
@@ -22,7 +22,9 @@ class Files {
 
   async filename(id: string): Promise<string | null> {
     let results = await (await db).all("SELECT * FROM files WHERE id = ?", [id]);
-    return results[0].filename;
+    if (results && results[0])
+      return results[0].filename;
+    return null;
   }
 
   async clear(): Promise<void> {

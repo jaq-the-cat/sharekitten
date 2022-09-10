@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&display=swap');
+
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+  --link: #bcffff;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+* {
+  color: var(--foreground);
+}
+
+body {
+  background-color: var(--background);
+}
+
+a {
+  color: var(--link);
+}
+
+input[type=file] {
+  padding: 4px;
+}
+
+button, input::file-selector-button {
+  color: var(--foreground);
+  background-color: var(--background);
+  border: 1px solid var(--foreground);
+  border-radius: 1px;
+  padding: 0.5rem;
+}
+
+button:hover, input::file-selector-button:hover {
+  cursor: pointer;
+}
+
+button:active, input::file-selector-button:active {
+  background-color: var(--foreground);
+  color: var(--background);
+}

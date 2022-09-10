@@ -6,7 +6,9 @@
   "scripts": {
     "debug": "tsc-watch --onSuccess \"nodemon dist/app.js\"",
     "deploy": "tsc",
-    "start": "node dist/app.js"
+    "start": "node dist/app.js",
+    "db-init": "tsc && node dist/dbi.js init",
+    "db-clear": "tsc && node dist/dbi.js clear"
   },
   "dependencies": {
     "dotenv": "^16.0.2",

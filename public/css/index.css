@@ -1,9 +1,38 @@
 :root {
-  font-size: 11pt;
+  font-size: 12pt;
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+h2 {
+  font-size: 2.5rem;
+  font-weight: 300;
+}
+
+small {
+  font-size: 0.9rem;
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+header {
+  row-gap: 0.5rem;
+}
+
+body {
+  height: 100vh;
+  row-gap: 1.5rem;
+}
+
+main {
+  row-gap: 10px;
 }

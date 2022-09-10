@@ -32,32 +32,30 @@ exports.app.use((req, _res, next) => {
     log_1.default.msg(`(${req.method}) ${req.ip} => ${req.path}`);
     next();
 });
-exports.app.get("/", (req, res) => {
-    log_1.default.msg(`QUERY: ${req.query.error}`);
-    res.render("index");
-});
-exports.app.post("/upload", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!req.files) {
-        log_1.default.warn("No files");
-        res.redirect("/?error=nofiles");
-    }
-    else {
-        const file = req.files.upload;
-        const id = yield files_1.default.save(file.name);
-        file.mv(path_1.default.join(config_1.default.PATH, id));
-        log_1.default.msg(`UPLOADED FILE: ${file.name} -> ${id}`);
-        res.render("success", { url: `/upload/${id}` });
-    }
-}));
+exports.app.get("/", (req, res) => res.render("index"));
+exports.app.get("/upload/nofile", (req, res) => res.render("nofile", { id: req.query.id }));
 exports.app.get("/upload/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const filename = yield files_1.default.filename(req.params.id);
     if (filename) {
-        res.download(path_1.default.join(config_1.default.PATH, req.params.id), filename);
+        res.download(path_1.default.join(config_1.default.FILE_PATH, req.params.id), filename);
         log_1.default.msg(`Downloading ${filename}`);
         return;
     }
     log_1.default.warn(`COULDN'T FIND ${req.params.id}`);
-    res.redirect("/?error=notfound");
+    res.redirect(`/upload/nofile?id=${req.params.id}`);
+}));
+exports.app.post("/upload", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.files) {
+        log_1.default.warn("No files");
+        res.redirect("/");
+    }
+    else {
+        const file = req.files.upload;
+        const id = yield files_1.default.save(file.name);
+        file.mv(path_1.default.join(config_1.default.FILE_PATH, id));
+        log_1.default.msg(`UPLOADED FILE: ${file.name} -> ${id}`);
+        res.render("index", { url: `/upload/${id}` });
+    }
 }));
 const PORT = config_1.default.PORT;
 exports.app.listen(PORT, () => {

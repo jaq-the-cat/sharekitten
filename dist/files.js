@@ -12,7 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initdb = void 0;
 const uuid_1 = require("uuid");
 const path_1 = __importDefault(require("path"));
 const config_1 = __importDefault(require("./config"));
@@ -22,13 +21,12 @@ let db = (0, sqlite_1.open)({
     filename: path_1.default.join(config_1.default.DB_PATH, 'db.db'),
     driver: sqlite3_1.default.Database,
 });
-function initdb() {
-    return __awaiter(this, void 0, void 0, function* () {
-        (yield db).run("CREATE TABLE files (id text, filename text)");
-    });
-}
-exports.initdb = initdb;
 class Files {
+    init() {
+        return __awaiter(this, void 0, void 0, function* () {
+            (yield db).run("DROP TABLE IF EXISTS files; CREATE TABLE files (id text, filename text)");
+        });
+    }
     save(filename) {
         return __awaiter(this, void 0, void 0, function* () {
             const id = (0, uuid_1.v4)();
@@ -39,7 +37,9 @@ class Files {
     filename(id) {
         return __awaiter(this, void 0, void 0, function* () {
             let results = yield (yield db).all("SELECT * FROM files WHERE id = ?", [id]);
-            return results[0].filename;
+            if (results && results[0])
+                return results[0].filename;
+            return null;
         });
     }
     clear() {
