@@ -14,9 +14,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const uuid_1 = require("uuid");
 const path_1 = __importDefault(require("path"));
-const config_1 = __importDefault(require("./config"));
 const sqlite3_1 = __importDefault(require("sqlite3"));
+const fs_1 = __importDefault(require("fs"));
 const sqlite_1 = require("sqlite");
+const config_1 = __importDefault(require("./config"));
+const log_1 = __importDefault(require("./log"));
 let db = (0, sqlite_1.open)({
     filename: path_1.default.join(config_1.default.DB_PATH, 'db.db'),
     driver: sqlite3_1.default.Database,
@@ -45,6 +47,15 @@ class Files {
     clear() {
         return __awaiter(this, void 0, void 0, function* () {
             (yield db).run("DELETE FROM files");
+            fs_1.default.readdir(config_1.default.FILE_PATH, (err, files) => {
+                if (err)
+                    log_1.default.error(err.message);
+                for (const file of files) {
+                    const filePath = path_1.default.join(config_1.default.FILE_PATH, file);
+                    fs_1.default.unlinkSync(filePath);
+                    log_1.default.msg(`Deleted ${filePath}`);
+                }
+            });
         });
     }
 }

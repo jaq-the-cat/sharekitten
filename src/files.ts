@@ -1,8 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
-import config from './config';
 import sqlite3 from "sqlite3";
+import fs from "fs";
 import { open } from "sqlite";
+
+import config from "./config";
+import log from "./log";
 
 let db = open({
   filename: path.join(config.DB_PATH, 'db.db'),
@@ -29,6 +32,14 @@ class Files {
 
   async clear(): Promise<void> {
     (await db).run("DELETE FROM files");
+    fs.readdir(config.FILE_PATH, (err, files) => {
+      if (err) log.error(err.message);
+      for (const file of files) {
+        const filePath = path.join(config.FILE_PATH, file);
+        fs.unlinkSync(filePath);
+        log.msg(`Deleted ${filePath}`);
+      }
+    });
   }
 }
 
