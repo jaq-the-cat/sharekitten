@@ -34,7 +34,13 @@ app.use((req, _res, next) => {
 
 app.get("/", (_req, res) => res.render("index"));
 app.get("/upload", (_req, res) => res.render("index"));
-app.get("/upload/nofile", (req, res) => res.render("nofile", {id: req.query.id}));
+app.get("/upload/nofile", (req, res) => {
+  if ('id' in req.query) {
+    res.render("nofile", {id: req.query.id});
+    return;
+  }
+  res.redirect("/");
+});
 app.get("/upload/ratelimit", (req, res) => {
   log.warn(`${req.ip} IS BEING RATE LIMITED`);
   res.render("ratelimit")
