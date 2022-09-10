@@ -1,12 +1,13 @@
 "use strict";
+var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
 exports.default = {
-    GB_PER_PERSON: 2,
-    HR_PER_PERSON: 6,
+    GB_PER_PERSON: Number.parseInt((_a = process.env.SHAREKITTEN_GB) !== null && _a !== void 0 ? _a : "2"),
+    HR_PER_PERSON: Number.parseInt((_b = process.env.SHAREKITTEN_HR) !== null && _b !== void 0 ? _b : "6"),
     PORT: process.env.PORT || 5000,
     DB_PATH: process.env.SHAREKITTEN_PATH || "/tmp/",
     FILE_PATH: process.env.SHAREKITTEN_FPATH || "/tmp/",
-    DEV: true
+    DEVMODE: process.env.NODE_ENV == "production" ? true : false,
 };
 //# sourceMappingURL=config.js.map

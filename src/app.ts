@@ -1,4 +1,4 @@
-import express from "express";
+import express, { ErrorRequestHandler } from "express";
 import rateLimit from "express-rate-limit";
 import fileUpload, {UploadedFile} from "express-fileupload";
 import { engine } from "express-handlebars";
@@ -9,7 +9,7 @@ import log from "./log";
 import path from "path";
 import files from "./files";
 
-log.devMode = config.DEV;
+log.devMode = config.DEVMODE;
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -31,6 +31,12 @@ app.use((req, _res, next) => {
   log.msg(`(${req.method}) ${req.ip} => ${req.path}`);
   next();
 });
+
+app.use(((err, _req, res, _next) => {
+  log.error(err);
+  res.status(err.status ?? 500);
+  res.end();
+}) as ErrorRequestHandler);
 
 app.get("/", (req, res) => res.render("index", { used: sizelimit.percentageUsed(req.ip) }));
 app.get("/upload", (req, res) => res.render("index", { used: sizelimit.percentageUsed(req.ip)}));

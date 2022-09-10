@@ -4,15 +4,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = __importDefault(require("fs"));
-var Log;
-(function (Log) {
-    Log[Log["Debug"] = 0] = "Debug";
-    Log[Log["Warning"] = 1] = "Warning";
-    Log[Log["Error"] = 2] = "Error";
-})(Log || (Log = {}));
+const reset = "\x1b[0m";
+const fgyellow = "\x1b[33m";
+const fgred = "\x1b[31m";
 class Logger {
     constructor() {
-        this.devMode = false;
+        this.devMode = true;
         this.logFile = "/tmp/sharekitten_log.txt";
         this.errFile = "/tmp/sharekitten_err.txt";
     }
@@ -23,30 +20,17 @@ class Logger {
         }
     }
     warn(s) {
-        console.error(`[WRN] ${s}`);
+        console.error(`${fgyellow}[WRN]${reset} ${s}`);
         if (!this.devMode) {
             fs_1.default.appendFileSync(this.logFile, s);
             fs_1.default.appendFileSync(this.errFile, s);
         }
     }
     error(s) {
-        console.error(`[ERR] ${s}`);
+        console.error(`${fgred}[ERR]${reset} ${s}`);
         if (!this.devMode) {
             fs_1.default.appendFileSync(this.logFile, s);
             fs_1.default.appendFileSync(this.errFile, s);
-        }
-    }
-    log(logType, s) {
-        switch (logType) {
-            case Log.Debug:
-                this.msg(s);
-                break;
-            case Log.Warning:
-                this.warn(s);
-                break;
-            case Log.Error:
-                this.error(s);
-                break;
         }
     }
 }

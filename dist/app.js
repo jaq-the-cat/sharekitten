@@ -22,7 +22,7 @@ const config_1 = __importDefault(require("./config"));
 const log_1 = __importDefault(require("./log"));
 const path_1 = __importDefault(require("path"));
 const files_1 = __importDefault(require("./files"));
-log_1.default.devMode = config_1.default.DEV;
+log_1.default.devMode = config_1.default.DEVMODE;
 const limiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000,
     max: 100,
@@ -41,6 +41,12 @@ exports.app.use((req, _res, next) => {
     log_1.default.msg(`(${req.method}) ${req.ip} => ${req.path}`);
     next();
 });
+exports.app.use(((err, _req, res, _next) => {
+    var _a;
+    log_1.default.error(err);
+    res.status((_a = err.status) !== null && _a !== void 0 ? _a : 500);
+    res.end();
+}));
 exports.app.get("/", (req, res) => res.render("index", { used: sizelimit_1.default.percentageUsed(req.ip) }));
 exports.app.get("/upload", (req, res) => res.render("index", { used: sizelimit_1.default.percentageUsed(req.ip) }));
 exports.app.get("/upload/nofile", (req, res) => {

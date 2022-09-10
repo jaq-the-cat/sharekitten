@@ -1,50 +1,34 @@
 import fs from 'fs';
 
-enum Log {
-  Debug,
-  Warning,
-  Error
-}
+const reset = "\x1b[0m";
+const fgyellow = "\x1b[33m";
+const fgred = "\x1b[31m";
 
 class Logger {
-  devMode: boolean = false;
+  devMode: boolean = true;
   logFile: string = "/tmp/sharekitten_log.txt";
   errFile: string = "/tmp/sharekitten_err.txt";
 
-  msg(s: string) {
+  msg(s: any): void {
     console.log(`[MSG] ${s}`);
     if (!this.devMode) {
       fs.appendFileSync(this.logFile, s);
     }
   }
 
-  warn(s: string) {
-    console.error(`[WRN] ${s}`);
+  warn(s: any): void {
+    console.error(`${fgyellow}[WRN]${reset} ${s}`);
     if (!this.devMode) {
       fs.appendFileSync(this.logFile, s);
       fs.appendFileSync(this.errFile, s);
     }
   }
 
-  error(s: string) {
-    console.error(`[ERR] ${s}`);
+  error(s: any): void {
+    console.error(`${fgred}[ERR]${reset} ${s}`);
     if (!this.devMode) {
       fs.appendFileSync(this.logFile, s);
       fs.appendFileSync(this.errFile, s);
-    }
-  }
-
-  log(logType: Log, s: string) {
-    switch (logType) {
-      case Log.Debug:
-        this.msg(s);
-        break;
-      case Log.Warning:
-        this.warn(s);
-        break;
-      case Log.Error:
-        this.error(s);
-        break;
     }
   }
 }
