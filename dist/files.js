@@ -26,13 +26,14 @@ let db = (0, sqlite_1.open)({
 class Files {
     init() {
         return __awaiter(this, void 0, void 0, function* () {
-            (yield db).run("DROP TABLE IF EXISTS files; CREATE TABLE files (id text, filename text)");
+            (yield db).run("DROP TABLE IF EXISTS files");
+            (yield db).run("CREATE TABLE files (id TEXT, filename TEXT, isPublic BOOLEAN NOT NULL CHECK (isPublic IN (0, 1)))");
         });
     }
-    save(filename) {
+    save(filename, isPublic) {
         return __awaiter(this, void 0, void 0, function* () {
             const id = (0, uuid_1.v4)();
-            (yield db).run("INSERT INTO files VALUES (?, ?)", [id, filename]);
+            (yield db).run("INSERT INTO files VALUES (?, ?, ?)", [id, filename, isPublic]);
             return id;
         });
     }

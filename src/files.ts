@@ -14,12 +14,13 @@ let db = open({
 
 class Files {
   async init() {
-    (await db).run("DROP TABLE IF EXISTS files; CREATE TABLE files (id text, filename text)");
+    (await db).run("DROP TABLE IF EXISTS files");
+    (await db).run("CREATE TABLE files (id TEXT, filename TEXT, isPublic BOOLEAN NOT NULL CHECK (isPublic IN (0, 1)))");
   }
 
-  async save(filename: string): Promise<string> {
+  async save(filename: string, isPublic: boolean): Promise<string> {
     const id = uuidv4();
-    (await db).run("INSERT INTO files VALUES (?, ?)", [id, filename]);
+    (await db).run("INSERT INTO files VALUES (?, ?, ?)", [id, filename, isPublic]);
     return id;
   }
 

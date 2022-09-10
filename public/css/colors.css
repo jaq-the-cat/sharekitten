@@ -19,10 +19,6 @@ a {
   color: var(--link);
 }
 
-input[type=file] {
-  padding: 4px;
-}
-
 button, input::file-selector-button {
   color: var(--foreground);
   background-color: var(--background);

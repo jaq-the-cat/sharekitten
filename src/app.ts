@@ -77,9 +77,9 @@ app.post("/upload", async (req, res) => {
     log.msg(`${req.ip} has uploaded ${file.size/1024}MB (${sizelimit.percentageUsed(req.ip)})`);
 
     // Save file
-    const id = await files.save(file.name);
+    const id = await files.save(file.name, req.body.isPublic);
     file.mv(path.join(config.FILE_PATH, id));
-    log.msg(`UPLOADED FILE: ${file.name} -> ${id}`);
+    log.msg(`UPLOADED ${req.body.isPublic ? 'PUBLIC' : 'PRIVATE'} FILE: ${file.name} -> ${id}`);
     res.render("index", { url: `/upload/${id}`, used: sizelimit.percentageUsed(req.ip) });
   } else {
     res.redirect("/upload/ratelimit");

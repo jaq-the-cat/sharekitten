@@ -36,3 +36,48 @@ body {
 main {
   row-gap: 10px;
 }
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  row-gap: 2px;
+}
+
+form button {
+  margin-top: 10px;
+}
+
+input[type=file] {
+  padding: 4px 0;
+}
+
+/* Checkbox styling because why couldn't it be easy??? */
+#isPublic {
+  display: none;
+}
+
+#public, #private {
+  user-select: none;
+}
+
+#public:hover, #private:hover {
+  cursor: pointer;
+}
+
+#public {
+  display: none
+}
+
+#private {
+  display: inline;
+}
+
+/* Checked */
+#isPublic:checked ~ #public {
+  display: inline;
+}
+
+#isPublic:checked ~ #private {
+  display: none;
+}

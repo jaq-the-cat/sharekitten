@@ -83,9 +83,9 @@ exports.app.post("/upload", (req, res) => __awaiter(void 0, void 0, void 0, func
         sizelimit_1.default.addSize(req.ip, file.size);
         log_1.default.msg(`${req.ip} has uploaded ${file.size / 1024}MB (${sizelimit_1.default.percentageUsed(req.ip)})`);
         // Save file
-        const id = yield files_1.default.save(file.name);
+        const id = yield files_1.default.save(file.name, req.body.isPublic);
         file.mv(path_1.default.join(config_1.default.FILE_PATH, id));
-        log_1.default.msg(`UPLOADED FILE: ${file.name} -> ${id}`);
+        log_1.default.msg(`UPLOADED ${req.body.isPublic ? 'PUBLIC' : 'PRIVATE'} FILE: ${file.name} -> ${id}`);
         res.render("index", { url: `/upload/${id}`, used: sizelimit_1.default.percentageUsed(req.ip) });
     }
     else {

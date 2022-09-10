@@ -4,5 +4,10 @@
 <p>You have used {{ used }} of your available data</p>
 <form action="/upload" method="post" enctype="multipart/form-data">
   <input name="upload" type="file">
+  <span>
+    <input id="isPublic" name="isPublic" type="checkbox">
+    <label id="public" for="isPublic">Public</label>
+    <label id="private" for="isPublic">Private</label>
+  </span>
   <button type="submit">Submit</button>
 </form>
