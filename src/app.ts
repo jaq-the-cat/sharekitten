@@ -32,8 +32,8 @@ app.use((req, _res, next) => {
   next();
 });
 
-app.get("/", (_req, res) => res.render("index"));
-app.get("/upload", (_req, res) => res.render("index"));
+app.get("/", (req, res) => res.render("index", { used: sizelimit.percentageUsed(req.ip) }));
+app.get("/upload", (req, res) => res.render("index", { used: sizelimit.percentageUsed(req.ip)}));
 app.get("/upload/nofile", (req, res) => {
   if ('id' in req.query) {
     res.render("nofile", {id: req.query.id});
@@ -59,7 +59,7 @@ app.get("/upload/:id", async (req, res) => {
 });
 
 app.post("/upload", async (req, res) => {
-  if (!req.files || !('upload' in files)) {
+  if (!req.files || !('upload' in req.files)) {
     log.warn("NO FILES");
     res.redirect("/");
     return;
@@ -68,15 +68,13 @@ app.post("/upload", async (req, res) => {
   if (sizelimit.userCanUpload(file.size, req.ip, Date.now())) {
     // Read user data and add to size limiter
     sizelimit.addSize(req.ip, file.size);
-    const kbUploaded = sizelimit.size(req.ip);
-    log.msg(`Uploaded: ${kbUploaded}KB, ${kbUploaded/1024}MB, ${kbUploaded/1024/1024}GB`);
-    log.msg(`${req.ip} has uploaded ${file.size/1024/1024}MB`);
+    log.msg(`${req.ip} has uploaded ${file.size/1024}MB (${sizelimit.percentageUsed(req.ip)})`);
 
     // Save file
     const id = await files.save(file.name);
     file.mv(path.join(config.FILE_PATH, id));
     log.msg(`UPLOADED FILE: ${file.name} -> ${id}`);
-    res.render("index", { url: `/upload/${id}` });
+    res.render("index", { url: `/upload/${id}`, used: sizelimit.percentageUsed(req.ip) });
   } else {
     res.redirect("/upload/ratelimit");
   }

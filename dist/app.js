@@ -41,11 +41,18 @@ exports.app.use((req, _res, next) => {
     log_1.default.msg(`(${req.method}) ${req.ip} => ${req.path}`);
     next();
 });
-exports.app.get("/", (_req, res) => res.render("index"));
-exports.app.get("/upload", (_req, res) => res.render("index"));
-exports.app.get("/upload/nofile", (req, res) => res.render("nofile", { id: req.query.id }));
+exports.app.get("/", (req, res) => res.render("index", { used: sizelimit_1.default.percentageUsed(req.ip) }));
+exports.app.get("/upload", (req, res) => res.render("index", { used: sizelimit_1.default.percentageUsed(req.ip) }));
+exports.app.get("/upload/nofile", (req, res) => {
+    if ('id' in req.query) {
+        res.render("nofile", { id: req.query.id });
+        return;
+    }
+    res.redirect("/");
+});
 exports.app.get("/upload/ratelimit", (req, res) => {
-    log_1.default.warn(`${req.ip} IS BEING RATE LIMITED`);
+    if ('ip' in req.query)
+        log_1.default.warn(`${req.ip} IS BEING RATE LIMITED`);
     res.render("ratelimit");
 });
 exports.app.get("/upload/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -59,7 +66,7 @@ exports.app.get("/upload/:id", (req, res) => __awaiter(void 0, void 0, void 0, f
     res.redirect(`/upload/nofile?id=${req.params.id}`);
 }));
 exports.app.post("/upload", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!req.files) {
+    if (!req.files || !('upload' in req.files)) {
         log_1.default.warn("NO FILES");
         res.redirect("/");
         return;
@@ -68,14 +75,12 @@ exports.app.post("/upload", (req, res) => __awaiter(void 0, void 0, void 0, func
     if (sizelimit_1.default.userCanUpload(file.size, req.ip, Date.now())) {
         // Read user data and add to size limiter
         sizelimit_1.default.addSize(req.ip, file.size);
-        const kbUploaded = sizelimit_1.default.size(req.ip);
-        log_1.default.msg(`Uploaded: ${kbUploaded}KB, ${kbUploaded / 1024}MB, ${kbUploaded / 1024 / 1024}GB`);
-        log_1.default.msg(`${req.ip} has uploaded ${file.size / 1024 / 1024}MB`);
+        log_1.default.msg(`${req.ip} has uploaded ${file.size / 1024}MB (${sizelimit_1.default.percentageUsed(req.ip)})`);
         // Save file
         const id = yield files_1.default.save(file.name);
         file.mv(path_1.default.join(config_1.default.FILE_PATH, id));
         log_1.default.msg(`UPLOADED FILE: ${file.name} -> ${id}`);
-        res.render("index", { url: `/upload/${id}` });
+        res.render("index", { url: `/upload/${id}`, used: sizelimit_1.default.percentageUsed(req.ip) });
     }
     else {
         res.redirect("/upload/ratelimit");

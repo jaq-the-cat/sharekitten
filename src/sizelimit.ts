@@ -1,3 +1,5 @@
+import config from './config';
+
 type uploads = {
   firstRequestTime: number,
   kbUploaded: number,
@@ -19,21 +21,15 @@ class SizeLimit {
       return true;
     };
 
-     //diff in hours
-    //let diff = (now - this._limit[id].firstRequestTime) / 1000 / 60 / 60;
-    // diff in seconds
-    let diff = (now - this._limit[id].firstRequestTime) / 1000;
-
-    // if less than 2h since first request and less than 2GB
-    //if (diff < 2 && (this._limit[id].kbUploaded + bytes/1024) < 2_097_152) {
-    if (diff < 30 && (this._limit[id].kbUploaded + bytes/1024) < 2_097_152) {
-      return true;
-    //} else if (diff > 2) {
-    } else if (diff > 30) {
+    // diff in hours
+    const diff = (now - this._limit[id].firstRequestTime) / 1000 / 60 / 60;
+    // if over Xh since first request
+    if (diff > config.HR_PER_PERSON) {
       this.addOrReset(id, now);
       return true;
     }
-    return false;
+    // if less than Xh since first request and less than XGB
+    return this._limit[id].kbUploaded + bytes/1024 < config.GB_PER_PERSON*1024*1024;
   }
 
   addSize(id: string, bytes: number): void {
@@ -45,7 +41,15 @@ class SizeLimit {
   }
 
   size(id: string): number {
-    return this._limit[id].kbUploaded;
+    if (id in this._limit)
+      return this._limit[id].kbUploaded;
+    return 0;
+  }
+
+  percentageUsed(id: string): string {
+    if (id in this._limit)
+      return `${((this._limit[id].kbUploaded/1024/1024*100) / config.GB_PER_PERSON).toFixed(2)}%`;
+    return "0%";
   }
 }
 

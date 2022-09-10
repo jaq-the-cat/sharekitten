@@ -1,6 +1,7 @@
 {{#if url}}
 <span>File uploaded at <a href="{{ url }}">{{ url }}</a></span>
 {{/if}}
+<p>You have used {{ used }} of your available data</p>
 <form action="/upload" method="post" enctype="multipart/form-data">
   <input name="upload" type="file">
   <button type="submit">Submit</button>
