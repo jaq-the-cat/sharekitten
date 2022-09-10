@@ -42,7 +42,8 @@ app.get("/upload/nofile", (req, res) => {
   res.redirect("/");
 });
 app.get("/upload/ratelimit", (req, res) => {
-  log.warn(`${req.ip} IS BEING RATE LIMITED`);
+  if ('ip' in req.query)
+    log.warn(`${req.ip} IS BEING RATE LIMITED`);
   res.render("ratelimit")
 });
 
@@ -58,7 +59,7 @@ app.get("/upload/:id", async (req, res) => {
 });
 
 app.post("/upload", async (req, res) => {
-  if (!req.files) {
+  if (!req.files || !('upload' in files)) {
     log.warn("NO FILES");
     res.redirect("/");
     return;
