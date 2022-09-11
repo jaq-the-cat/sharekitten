@@ -15,7 +15,7 @@ let db = open({
 class Files {
   async init() {
     await (await db).run("DROP TABLE IF EXISTS files");
-    await (await db).run("CREATE TABLE files (id TEXT, filename TEXT, uploaded INTEGER, isPublic BOOLEAN NOT NULL CHECK (isPublic IN (0, 1)))");
+    await (await db).run("CREATE TABLE files (id TEXT NOT NULL, filename TEXT NOT NULL, uploaded INTEGER NOT NULL, isPublic BOOLEAN NOT NULL CHECK (isPublic IN (0, 1)))");
   }
 
   async save(filename: string, isPublic: boolean): Promise<string> {
@@ -31,8 +31,8 @@ class Files {
     return null;
   }
 
-  async all(page: number): Promise<any[]> {
-    return (await db).all("SELECT * FROM files ORDER BY uploaded DESC LIMIT ?, ?", [page*config.PERPAGE, config.PERPAGE]);
+  async public(page: number): Promise<any[]> {
+    return (await db).all("SELECT * FROM files WHERE isPublic = 1 ORDER BY uploaded DESC LIMIT ?, ?", [page*config.PERPAGE, config.PERPAGE]);
   }
 
   async clear(): Promise<void> {

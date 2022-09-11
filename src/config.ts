@@ -3,7 +3,7 @@ import 'dotenv/config';
 export default {
   GB_PER_PERSON: Number.parseInt(process.env.SHAREKITTEN_GB ?? "2"),
   HR_PER_PERSON: Number.parseInt(process.env.SHAREKITTEN_HR ?? "6"),
-  PERPAGE: 50,
+  PERPAGE: Number.parseInt(process.env.PERPAGE ?? "30"),
 
   PORT: process.env.PORT || 5000,
   DB_PATH: process.env.SHAREKITTEN_PATH || "/tmp/",

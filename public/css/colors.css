@@ -3,7 +3,8 @@
 :root {
   --background: #000000;
   --foreground: #ffffff;
-  --link: #bcffff;
+  /*--link: #bcffff;*/
+  --link: #ffaa61;
   font-family: 'IBM Plex Mono', monospace;
 }
 

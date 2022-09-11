@@ -77,8 +77,9 @@ app.get("/uploads", async (req, res) => {
   res.render("publicfiles", {
     page: page,
     hasPrevious: page > 0,
+    previous: page-1,
     next: page+1,
-    files: (await files.all(page)).map((row) => {
+    files: (await files.public(page)).map((row) => {
       return {
         id: row.id,
         filename: row.filename,

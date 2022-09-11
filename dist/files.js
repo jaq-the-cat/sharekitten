@@ -27,7 +27,7 @@ class Files {
     init() {
         return __awaiter(this, void 0, void 0, function* () {
             yield (yield db).run("DROP TABLE IF EXISTS files");
-            yield (yield db).run("CREATE TABLE files (id TEXT, filename TEXT, uploaded INTEGER, isPublic BOOLEAN NOT NULL CHECK (isPublic IN (0, 1)))");
+            yield (yield db).run("CREATE TABLE files (id TEXT NOT NULL, filename TEXT NOT NULL, uploaded INTEGER NOT NULL, isPublic BOOLEAN NOT NULL CHECK (isPublic IN (0, 1)))");
         });
     }
     save(filename, isPublic) {
@@ -45,9 +45,9 @@ class Files {
             return null;
         });
     }
-    all(page) {
+    public(page) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (yield db).all("SELECT * FROM files ORDER BY uploaded DESC LIMIT ?, ?", [page * config_1.default.PERPAGE, config_1.default.PERPAGE]);
+            return (yield db).all("SELECT * FROM files WHERE isPublic = 1 ORDER BY uploaded DESC LIMIT ?, ?", [page * config_1.default.PERPAGE, config_1.default.PERPAGE]);
         });
     }
     clear() {
