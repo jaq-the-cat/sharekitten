@@ -13,11 +13,11 @@ Downloads a file with specified ID
 
 - `[GET] /uploads`
 
-List of public files
+List of public files. By default, each page consists of 30 files.
 
 - `[POST] /upload`
 
-Uploads a file. Limit is 2GB every 2h per person
+Uploads a file. Limit is 2GB every 6h per person
 
 ## Setup
 
