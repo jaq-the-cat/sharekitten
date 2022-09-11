@@ -23,7 +23,7 @@ Uploads a file. Limit is 2GB every 6h per person
 
 - Clone the repo with `git clone https://github.com/jaq-the-cat/sharekitten`
 
-- Edit the .env file with your desired configurations and set the path where the database and files will be stored
+- Edit the `src/config.ts` and `.env` files with your desired configurations
 
 - Setup the SQLITE3 database with `yarn db-init`
 
