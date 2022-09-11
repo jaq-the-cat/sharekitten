@@ -1,6 +1,14 @@
-<ul>
-  <a href="/">Return to website</a>
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+<a href="/">Return to website</a>
+<span>
+<i class="fas fa-caret-left"></i>
+Page {{ page }}
+<i class="fas fa-caret-right"></i>
+</span>
+<div class="files">
   {{#each files}}
-    <li><a href="/upload/{{this.id}}">{{this.filename}}</a></li>
+  <div class="file">
+    <a href="/upload/{{this.id}}">/upload/{{this.filename}}</a>
+  </div>
   {{/each}}
-</ul>
+</div>

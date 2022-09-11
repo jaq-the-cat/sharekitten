@@ -65,8 +65,11 @@ app.get("/upload/:id", async (req, res) => {
 });
 
 app.get("/uploads", async (req, res) => {
+  const rPage = req.query.page;
+  const page = rPage ? Number.parseInt(rPage as string) : 0;
   res.render("publicfiles", {
-    files: await files.all(),
+    page: page,
+    files: await files.all(page),
   });
 });
 

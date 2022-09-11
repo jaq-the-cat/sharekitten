@@ -72,8 +72,11 @@ exports.app.get("/upload/:id", (req, res) => __awaiter(void 0, void 0, void 0, f
     res.redirect(`/upload/nofile?id=${req.params.id}`);
 }));
 exports.app.get("/uploads", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const rPage = req.query.page;
+    const page = rPage ? Number.parseInt(rPage) : 0;
     res.render("publicfiles", {
-        files: yield files_1.default.all(),
+        page: page,
+        files: yield files_1.default.all(page),
     });
 }));
 exports.app.post("/upload", (req, res) => __awaiter(void 0, void 0, void 0, function* () {

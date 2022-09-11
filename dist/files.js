@@ -26,14 +26,14 @@ let db = (0, sqlite_1.open)({
 class Files {
     init() {
         return __awaiter(this, void 0, void 0, function* () {
-            (yield db).run("DROP TABLE IF EXISTS files");
-            (yield db).run("CREATE TABLE files (id TEXT, filename TEXT, isPublic BOOLEAN NOT NULL CHECK (isPublic IN (0, 1)))");
+            yield (yield db).run("DROP TABLE IF EXISTS files");
+            yield (yield db).run("CREATE TABLE files (id TEXT, filename TEXT, uploaded INTEGER, isPublic BOOLEAN NOT NULL CHECK (isPublic IN (0, 1)))");
         });
     }
     save(filename, isPublic) {
         return __awaiter(this, void 0, void 0, function* () {
             const id = (0, uuid_1.v4)();
-            (yield db).run("INSERT INTO files VALUES (?, ?, ?)", [id, filename, isPublic ? 1 : 0]);
+            (yield db).run("INSERT INTO files VALUES (?, ?, ?, ?)", [id, filename, Date.now(), isPublic ? 1 : 0]);
             return id;
         });
     }
@@ -45,9 +45,9 @@ class Files {
             return null;
         });
     }
-    all() {
+    all(page) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (yield db).all("SELECT * FROM files");
+            return (yield db).all("SELECT * FROM files ORDER BY uploaded LIMIT ?, ?", [page * config_1.default.PERPAGE, config_1.default.PERPAGE]);
         });
     }
     clear() {

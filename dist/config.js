@@ -5,6 +5,7 @@ require("dotenv/config");
 exports.default = {
     GB_PER_PERSON: Number.parseInt((_a = process.env.SHAREKITTEN_GB) !== null && _a !== void 0 ? _a : "2"),
     HR_PER_PERSON: Number.parseInt((_b = process.env.SHAREKITTEN_HR) !== null && _b !== void 0 ? _b : "6"),
+    PERPAGE: 50,
     PORT: process.env.PORT || 5000,
     DB_PATH: process.env.SHAREKITTEN_PATH || "/tmp/",
     FILE_PATH: process.env.SHAREKITTEN_FPATH || "/tmp/",

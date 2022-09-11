@@ -14,13 +14,13 @@ let db = open({
 
 class Files {
   async init() {
-    (await db).run("DROP TABLE IF EXISTS files");
-    (await db).run("CREATE TABLE files (id TEXT, filename TEXT, isPublic BOOLEAN NOT NULL CHECK (isPublic IN (0, 1)))");
+    await (await db).run("DROP TABLE IF EXISTS files");
+    await (await db).run("CREATE TABLE files (id TEXT, filename TEXT, uploaded INTEGER, isPublic BOOLEAN NOT NULL CHECK (isPublic IN (0, 1)))");
   }
 
   async save(filename: string, isPublic: boolean): Promise<string> {
     const id = uuidv4();
-    (await db).run("INSERT INTO files VALUES (?, ?, ?)", [id, filename, isPublic ? 1 : 0]);
+    (await db).run("INSERT INTO files VALUES (?, ?, ?, ?)", [id, filename, Date.now(), isPublic ? 1 : 0]);
     return id;
   }
 
@@ -31,8 +31,8 @@ class Files {
     return null;
   }
 
-  async all(): Promise<any[]> {
-    return (await db).all("SELECT * FROM files");
+  async all(page: number): Promise<any[]> {
+    return (await db).all("SELECT * FROM files ORDER BY uploaded LIMIT ?, ?", [page*config.PERPAGE, config.PERPAGE]);
   }
 
   async clear(): Promise<void> {

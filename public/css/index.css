@@ -81,3 +81,16 @@ input[type=file] {
 #isPublic:checked ~ #private {
   display: none;
 }
+
+.files {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  max-width: 50vw;
+}
+
+.file {
+  border: 1px solid white;
+  padding: 5px;
+  margin: 10px;
+}
