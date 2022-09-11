@@ -47,7 +47,7 @@ class Files {
     }
     all(page) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (yield db).all("SELECT * FROM files ORDER BY uploaded LIMIT ?, ?", [page * config_1.default.PERPAGE, config_1.default.PERPAGE]);
+            return (yield db).all("SELECT * FROM files ORDER BY uploaded DESC LIMIT ?, ?", [page * config_1.default.PERPAGE, config_1.default.PERPAGE]);
         });
     }
     clear() {

@@ -69,6 +69,8 @@ app.get("/uploads", async (req, res) => {
   const page = rPage ? Number.parseInt(rPage as string) : 0;
   res.render("publicfiles", {
     page: page,
+    hasPrevious: page > 0,
+    next: page+1,
     files: await files.all(page),
   });
 });

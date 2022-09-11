@@ -76,6 +76,8 @@ exports.app.get("/uploads", (req, res) => __awaiter(void 0, void 0, void 0, func
     const page = rPage ? Number.parseInt(rPage) : 0;
     res.render("publicfiles", {
         page: page,
+        hasPrevious: page > 0,
+        next: page + 1,
         files: yield files_1.default.all(page),
     });
 }));

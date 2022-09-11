@@ -1,14 +1,16 @@
-<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+<script src="https://kit.fontawesome.com/42565a906c.js" crossorigin="anonymous"></script>
 <a href="/">Return to website</a>
 <span>
-<i class="fas fa-caret-left"></i>
+{{#if hasPrevious }}
+  <a href="/uploads?page={{ page-1 }}"><i class="fas fa-caret-left"></i></a>
+{{/if}}
 Page {{ page }}
-<i class="fas fa-caret-right"></i>
+<a href="/uploads?page={{ next }}"><i class="fas fa-caret-right"></i></a>
 </span>
 <div class="files">
   {{#each files}}
   <div class="file">
-    <a href="/upload/{{this.id}}">/upload/{{this.filename}}</a>
+    <a href="/upload/{{this.id}}">{{this.filename}}</a>
   </div>
   {{/each}}
 </div>

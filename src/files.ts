@@ -32,7 +32,7 @@ class Files {
   }
 
   async all(page: number): Promise<any[]> {
-    return (await db).all("SELECT * FROM files ORDER BY uploaded LIMIT ?, ?", [page*config.PERPAGE, config.PERPAGE]);
+    return (await db).all("SELECT * FROM files ORDER BY uploaded DESC LIMIT ?, ?", [page*config.PERPAGE, config.PERPAGE]);
   }
 
   async clear(): Promise<void> {
