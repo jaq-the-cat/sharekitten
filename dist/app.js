@@ -71,6 +71,12 @@ exports.app.get("/upload/:id", (req, res) => __awaiter(void 0, void 0, void 0, f
     log_1.default.warn(`COULDN'T FIND ${req.params.id}`);
     res.redirect(`/upload/nofile?id=${req.params.id}`);
 }));
+function msToFormattedString(msSinceEpoch) {
+    const d = new Date(msSinceEpoch);
+    const date = `${d.getUTCFullYear().toString().padStart(4, '0')}-${d.getUTCMonth().toString().padStart(2, '0')}-${d.getUTCDate().toString().padStart(2, '0')}`;
+    const time = ` ${d.getUTCHours().toString().padStart(2, '0')}:${d.getUTCMinutes().toString().padStart(2, '0')}`;
+    return `${date} ${time}`;
+}
 exports.app.get("/uploads", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const rPage = req.query.page;
     const page = rPage ? Number.parseInt(rPage) : 0;
@@ -78,7 +84,13 @@ exports.app.get("/uploads", (req, res) => __awaiter(void 0, void 0, void 0, func
         page: page,
         hasPrevious: page > 0,
         next: page + 1,
-        files: yield files_1.default.all(page),
+        files: (yield files_1.default.all(page)).map((row) => {
+            return {
+                id: row.id,
+                filename: row.filename,
+                uploaded: msToFormattedString(row.uploaded),
+            };
+        }),
     });
 }));
 exports.app.post("/upload", (req, res) => __awaiter(void 0, void 0, void 0, function* () {

@@ -64,6 +64,13 @@ app.get("/upload/:id", async (req, res) => {
   res.redirect(`/upload/nofile?id=${req.params.id}`);
 });
 
+function msToFormattedString(msSinceEpoch: number): string {
+  const d = new Date(msSinceEpoch);
+  const date = `${d.getUTCFullYear().toString().padStart(4, '0')}-${d.getUTCMonth().toString().padStart(2, '0')}-${d.getUTCDate().toString().padStart(2, '0')}`;
+  const time = ` ${d.getUTCHours().toString().padStart(2, '0')}:${d.getUTCMinutes().toString().padStart(2, '0')}`;
+  return `${date} ${time}`;
+}
+
 app.get("/uploads", async (req, res) => {
   const rPage = req.query.page;
   const page = rPage ? Number.parseInt(rPage as string) : 0;
@@ -71,7 +78,13 @@ app.get("/uploads", async (req, res) => {
     page: page,
     hasPrevious: page > 0,
     next: page+1,
-    files: await files.all(page),
+    files: (await files.all(page)).map((row) => {
+      return {
+        id: row.id,
+        filename: row.filename,
+        uploaded: msToFormattedString(row.uploaded),
+      };
+    }),
   });
 });
 

@@ -28,8 +28,15 @@ header {
   row-gap: 0.5rem;
 }
 
+html {
+  height: 100%;
+}
+
 body {
-  height: 100vh;
+  padding-bottom: 15px;
+}
+
+body {
   row-gap: 1.5rem;
 }
 
@@ -83,14 +90,13 @@ input[type=file] {
 }
 
 .files {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  max-width: 50vw;
+  width: 100%;
 }
 
-.file {
-  border: 1px solid white;
-  padding: 5px;
-  margin: 10px;
+.files td {
+  padding: 0 0.5ch;
+}
+
+.link {
+  width: 44ch;
 }
