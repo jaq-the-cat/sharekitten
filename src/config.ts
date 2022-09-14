@@ -1,8 +1,8 @@
 import 'dotenv/config';
 
 export default {
-  GB_PER_PERSON: 2,
-  HR_PER_PERSON: 6,
+  GB_PER_TIME: 6,
+  TIME: 6,
   PERPAGE: 30,
 
   PORT: process.env.PORT || 5000,
