@@ -15,8 +15,8 @@ Page {{ page }}
   <tr class="table-sep"></tr>
   {{#each files}}
   <tr>
-    <td>{{this.filename}}</td>
-    <td class="link-cell"><a href="/upload/{{this.id}}">/upload/{{this.id}}</a></td>
+    <td title="{{this.filename}}">{{this.filename}}</td>
+    <td title="{{this.id}}" class="link-cell"><a href="/upload/{{this.id}}">/upload/{{this.id}}</a></td>
     <td>{{this.uploaded}}</td>
   </tr>
   {{/each}}

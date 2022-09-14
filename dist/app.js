@@ -47,8 +47,8 @@ exports.app.use(((err, _req, res, _next) => {
     res.status((_a = err.status) !== null && _a !== void 0 ? _a : 500);
     res.end();
 }));
-exports.app.get("/", (req, res) => res.render("index", { used: sizelimit_1.default.percentageUsed(req.ip) }));
-exports.app.get("/upload", (req, res) => res.render("index", { used: sizelimit_1.default.percentageUsed(req.ip) }));
+exports.app.get("/", (_req, res) => res.render("index", { used: sizelimit_1.default.percentageUsed() }));
+exports.app.get("/upload", (_req, res) => res.render("index", { used: sizelimit_1.default.percentageUsed() }));
 exports.app.get("/upload/nofile", (req, res) => {
     if ('id' in req.query) {
         res.render("nofile", { id: req.query.id });
@@ -101,15 +101,15 @@ exports.app.post("/upload", (req, res) => __awaiter(void 0, void 0, void 0, func
         return;
     }
     const file = req.files.upload;
-    if (sizelimit_1.default.userCanUpload(file.size, req.ip, Date.now())) {
+    if (sizelimit_1.default.canUpload(file.size, Date.now())) {
         // Read user data and add to size limiter
-        sizelimit_1.default.addSize(req.ip, file.size);
-        log_1.default.msg(`${req.ip} has uploaded ${file.size / 1024}MB (${sizelimit_1.default.percentageUsed(req.ip)})`);
+        sizelimit_1.default.addSize(file.size);
+        log_1.default.msg(`${req.ip} has uploaded ${file.size / 1024}MB (${sizelimit_1.default.percentageUsed()})`);
         // Save file
         const id = yield files_1.default.save(file.name, req.body.isPublic);
         file.mv(path_1.default.join(config_1.default.FILE_PATH, id));
         log_1.default.msg(`UPLOADED ${req.body.isPublic ? 'PUBLIC' : 'PRIVATE'} FILE: ${file.name} -> ${id}`);
-        res.render("index", { url: `/upload/${id}`, used: sizelimit_1.default.percentageUsed(req.ip) });
+        res.render("index", { url: `/upload/${id}`, used: sizelimit_1.default.percentageUsed() });
     }
     else {
         res.redirect("/upload/ratelimit");

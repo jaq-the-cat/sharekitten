@@ -3,12 +3,13 @@
 :root {
   --background: #000000;
   --foreground: #ffffff;
-  /*--link: #bcffff;*/
   --link: #ffaa61;
-  font-family: 'IBM Plex Mono', monospace;
+  --nhl: #818181;
+  --hl: #ffdea2;
 }
 
 * {
+  font-family: 'IBM Plex Mono', monospace;
   color: var(--foreground);
 }
 
@@ -20,15 +21,22 @@ a {
   color: var(--link);
 }
 
-button, input::file-selector-button {
-  color: var(--foreground);
+button, #uploadLabel {
+  font-size: 1.1rem;
+  color: var(--link);
   background-color: var(--background);
-  border: 1px solid var(--foreground);
-  border-radius: 1px;
-  padding: 0.5rem;
+  border: none;
 }
 
-button:hover, input::file-selector-button:hover {
+#public {
+  color: var(--hl);
+}
+
+#private {
+  color: var(--nhl);
+}
+
+button:hover, #uploadLabel:hover {
   cursor: pointer;
 }
 

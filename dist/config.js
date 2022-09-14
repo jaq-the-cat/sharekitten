@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
 exports.default = {
-    GB_PER_PERSON: 2,
-    HR_PER_PERSON: 6,
+    GB_PER_TIME: 6,
+    TIME: 6,
     PERPAGE: 30,
     PORT: process.env.PORT || 5000,
     DB_PATH: process.env.SHAREKITTEN_DB_PATH || "/tmp/",

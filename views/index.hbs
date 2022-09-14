@@ -1,13 +1,26 @@
 {{#if url}}
 <span>File uploaded at <a href="{{ url }}">{{ url }}</a></span>
 {{/if}}
-<p>You have used {{ used }} of your available data</p>
-<form action="/upload" method="post" enctype="multipart/form-data">
-  <input name="upload" type="file">
+<p>{{ used }} of the available data has been used</p>
+<form class="center" action="/upload" method="post" enctype="multipart/form-data">
+  <label id="uploadLabel" for="upload">[Upload a file]</label>
+  <input id="upload" name="upload" type="file">
   <span>
     <input id="isPublic" name="isPublic" type="checkbox">
-    <label id="public" for="isPublic">Public</label>
-    <label id="private" for="isPublic">Private</label>
+    <label id="public" for="isPublic">&ltPublic&gt</label>
+    <label id="private" for="isPublic">>Private<</label>
   </span>
-  <button type="submit">Submit</button>
+  <button type="submit">[Submit]</button>
 </form>
+
+<script>
+
+const upload = document.getElementById("upload");
+const uploadLabel = document.getElementById("uploadLabel");
+
+upload.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  uploadLabel.innerHTML = `[Upload ${file.name}]`;
+});
+
+</script>
