@@ -54,10 +54,10 @@ app.get("/upload/ratelimit", (req, res) => {
 });
 
 app.get("/upload/:id", async (req, res) => {
-  const filename = await files.filename(req.params.id);
-  if (filename) {
-    res.download(path.join(config.FILE_PATH, req.params.id), filename);
-    log.msg(`Downloading ${filename}`);
+  const link = await files.downloadLink(req.params.id);
+  if (link) {
+    res.download(link);
+    log.msg(`Downloading ${link}`);
     return;
   }
   log.warn(`COULDN'T FIND ${req.params.id}`);
@@ -81,8 +81,8 @@ app.get("/uploads", async (req, res) => {
     next: page+1,
     files: (await files.public(page)).map((row) => {
       return {
-        id: row.id,
         filename: row.filename,
+        id: row.id,
         uploaded: msToFormattedString(row.uploaded),
       };
     }),
@@ -101,9 +101,8 @@ app.post("/upload", async (req, res) => {
     sizelimit.addSize(file.size);
     log.msg(`${req.ip} has uploaded ${file.size/1024}MB (${sizelimit.percentageUsed()})`);
 
-    // Save file
-    const id = await files.save(file.name, req.body.isPublic);
-    file.mv(path.join(config.FILE_PATH, id));
+    // Save file to Database and upload it to Storage
+    const id = await files.save(file.name, file.tempFilePath, req.body.isPublic);
     log.msg(`UPLOADED ${req.body.isPublic ? 'PUBLIC' : 'PRIVATE'} FILE: ${file.name} -> ${id}`);
     res.render("index", { url: `/upload/${id}`, used: sizelimit.percentageUsed() });
   } else {

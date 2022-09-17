@@ -18,8 +18,8 @@ function dbi() {
         if (process.argv.length != 3)
             return;
         switch (process.argv[2]) {
-            case 'init':
-                files_1.default.init();
+            case 'reset':
+                files_1.default.resetDb();
                 break;
             case 'clear':
                 files_1.default.clear();

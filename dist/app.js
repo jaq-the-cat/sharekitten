@@ -20,7 +20,6 @@ const express_handlebars_1 = require("express-handlebars");
 const sizelimit_1 = __importDefault(require("./sizelimit"));
 const config_1 = __importDefault(require("./config"));
 const log_1 = __importDefault(require("./log"));
-const path_1 = __importDefault(require("path"));
 const files_1 = __importDefault(require("./files"));
 log_1.default.devMode = config_1.default.DEVMODE;
 const limiter = (0, express_rate_limit_1.default)({
@@ -62,10 +61,10 @@ exports.app.get("/upload/ratelimit", (req, res) => {
     res.render("ratelimit");
 });
 exports.app.get("/upload/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const filename = yield files_1.default.filename(req.params.id);
-    if (filename) {
-        res.download(path_1.default.join(config_1.default.FILE_PATH, req.params.id), filename);
-        log_1.default.msg(`Downloading ${filename}`);
+    const link = yield files_1.default.downloadLink(req.params.id);
+    if (link) {
+        res.download(link);
+        log_1.default.msg(`Downloading ${link}`);
         return;
     }
     log_1.default.warn(`COULDN'T FIND ${req.params.id}`);
@@ -87,8 +86,8 @@ exports.app.get("/uploads", (req, res) => __awaiter(void 0, void 0, void 0, func
         next: page + 1,
         files: (yield files_1.default.public(page)).map((row) => {
             return {
-                id: row.id,
                 filename: row.filename,
+                id: row.id,
                 uploaded: msToFormattedString(row.uploaded),
             };
         }),
@@ -105,9 +104,8 @@ exports.app.post("/upload", (req, res) => __awaiter(void 0, void 0, void 0, func
         // Read user data and add to size limiter
         sizelimit_1.default.addSize(file.size);
         log_1.default.msg(`${req.ip} has uploaded ${file.size / 1024}MB (${sizelimit_1.default.percentageUsed()})`);
-        // Save file
-        const id = yield files_1.default.save(file.name, req.body.isPublic);
-        file.mv(path_1.default.join(config_1.default.FILE_PATH, id));
+        // Save file to Database and upload it to Storage
+        const id = yield files_1.default.save(file.name, file.tempFilePath, req.body.isPublic);
         log_1.default.msg(`UPLOADED ${req.body.isPublic ? 'PUBLIC' : 'PRIVATE'} FILE: ${file.name} -> ${id}`);
         res.render("index", { url: `/upload/${id}`, used: sizelimit_1.default.percentageUsed() });
     }
