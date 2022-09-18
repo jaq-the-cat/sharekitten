@@ -1,13 +1,15 @@
-import express, { ErrorRequestHandler } from "express";
-import rateLimit from "express-rate-limit";
-import fileUpload, {UploadedFile} from "express-fileupload";
-import { engine } from "express-handlebars";
+import express, {ErrorRequestHandler} from "express";
 import 'express-async-errors';
+import fileUpload, {UploadedFile} from "express-fileupload";
+import {engine} from "express-handlebars";
+import rateLimit from "express-rate-limit";
+import fs from 'fs';
+import https from "https";
 
-import sizelimit from './sizelimit';
 import config from "./config";
-import log from "./log";
 import files from "./files";
+import log from "./log";
+import sizelimit from './sizelimit';
 
 log.devMode = config.DEVMODE;
 
@@ -115,6 +117,9 @@ app.use(((err, _req, res, _next) => {
 }) as ErrorRequestHandler);
 
 const PORT = config.PORT;
-app.listen(PORT, () => {
-  log.msg(`sharekitten running on ${PORT}`);
+https.createServer({
+  key: fs.readFileSync("server.key"),
+  cert: fs.readFileSync("server.cert"),
+}, app).listen(PORT, () => {
+  log.msg(`sharekitten running on ${PORT} with HTTPS`);
 });
