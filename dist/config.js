@@ -7,7 +7,8 @@ exports.default = {
     PERPAGE: 30,
     PORT: process.env.PORT || 5000,
     DB_PATH: process.env.SHAREKITTEN_DB_PATH || "/tmp/",
-    FILE_PATH: process.env.SHAREKITTEN_FILE_PATH || "/tmp/",
-    DEVMODE: process.env.NODE_ENV == "production" ? true : false,
+    GCLOUD_CRED: process.env.GCLOUD_CRED,
+    //FILE_PATH: process.env.SHAREKITTEN_FILE_PATH || "/tmp/",
+    DEVMODE: process.env.NODE_ENV !== "production",
 };
 //# sourceMappingURL=config.js.map

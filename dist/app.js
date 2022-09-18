@@ -17,6 +17,7 @@ const express_1 = __importDefault(require("express"));
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const express_fileupload_1 = __importDefault(require("express-fileupload"));
 const express_handlebars_1 = require("express-handlebars");
+require("express-async-errors");
 const sizelimit_1 = __importDefault(require("./sizelimit"));
 const config_1 = __importDefault(require("./config"));
 const log_1 = __importDefault(require("./log"));
@@ -32,7 +33,9 @@ exports.app.engine('.hbs', (0, express_handlebars_1.engine)({ extname: '.hbs' })
 exports.app.set('view engine', '.hbs');
 exports.app.set('views', './views');
 exports.app.use(express_1.default.json());
-exports.app.use((0, express_fileupload_1.default)());
+exports.app.use((0, express_fileupload_1.default)({
+    useTempFiles: true,
+}));
 exports.app.use(express_1.default.static('public/'));
 exports.app.set('trust proxy', true);
 exports.app.use(limiter);
@@ -40,12 +43,6 @@ exports.app.use((req, _res, next) => {
     log_1.default.msg(`(${req.method}) ${req.ip} => ${req.path}`);
     next();
 });
-exports.app.use(((err, _req, res, _next) => {
-    var _a;
-    log_1.default.error(err);
-    res.status((_a = err.status) !== null && _a !== void 0 ? _a : 500);
-    res.end();
-}));
 exports.app.get("/", (_req, res) => res.render("index", { used: sizelimit_1.default.percentageUsed() }));
 exports.app.get("/upload", (_req, res) => res.render("index", { used: sizelimit_1.default.percentageUsed() }));
 exports.app.get("/upload/nofile", (req, res) => {
@@ -60,15 +57,17 @@ exports.app.get("/upload/ratelimit", (req, res) => {
         log_1.default.warn(`${req.ip} IS BEING RATE LIMITED`);
     res.render("ratelimit");
 });
-exports.app.get("/upload/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const link = yield files_1.default.downloadLink(req.params.id);
-    if (link) {
-        res.download(link);
-        log_1.default.msg(`Downloading ${link}`);
-        return;
-    }
-    log_1.default.warn(`COULDN'T FIND ${req.params.id}`);
-    res.redirect(`/upload/nofile?id=${req.params.id}`);
+exports.app.get("/download/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const filename = (_a = yield files_1.default.nameOf(req.params.id)) !== null && _a !== void 0 ? _a : req.params.id;
+    files_1.default.downloadLink(req.params.id, (path) => {
+        log_1.default.msg(`Downloading ${path}`);
+        res.download(path, filename);
+    }).catch((e) => {
+        log_1.default.error(e);
+        log_1.default.warn(`COULDN'T FIND ${filename !== null && filename !== void 0 ? filename : req.params.id}`);
+        res.redirect(`/upload/nofile?id=${filename !== null && filename !== void 0 ? filename : req.params.id}`);
+    });
 }));
 function msToFormattedString(msSinceEpoch) {
     const d = new Date(msSinceEpoch);
@@ -84,7 +83,7 @@ exports.app.get("/uploads", (req, res) => __awaiter(void 0, void 0, void 0, func
         hasPrevious: page > 0,
         previous: page - 1,
         next: page + 1,
-        files: (yield files_1.default.public(page)).map((row) => {
+        files: (yield files_1.default.getPublic(page)).map((row) => {
             return {
                 filename: row.filename,
                 id: row.id,
@@ -105,13 +104,20 @@ exports.app.post("/upload", (req, res) => __awaiter(void 0, void 0, void 0, func
         sizelimit_1.default.addSize(file.size);
         log_1.default.msg(`${req.ip} has uploaded ${file.size / 1024}MB (${sizelimit_1.default.percentageUsed()})`);
         // Save file to Database and upload it to Storage
-        const id = yield files_1.default.save(file.name, file.tempFilePath, req.body.isPublic);
+        const id = yield files_1.default.saveAs(file.name, file.tempFilePath, req.body.isPublic);
         log_1.default.msg(`UPLOADED ${req.body.isPublic ? 'PUBLIC' : 'PRIVATE'} FILE: ${file.name} -> ${id}`);
-        res.render("index", { url: `/upload/${id}`, used: sizelimit_1.default.percentageUsed() });
+        res.render("index", { url: `/download/${id}`, used: sizelimit_1.default.percentageUsed() });
     }
     else {
         res.redirect("/upload/ratelimit");
     }
+}));
+// global error handler
+exports.app.use(((err, _req, res, _next) => {
+    var _a;
+    log_1.default.error(err);
+    res.status((_a = err.status) !== null && _a !== void 0 ? _a : 500);
+    res.end();
 }));
 const PORT = config_1.default.PORT;
 exports.app.listen(PORT, () => {

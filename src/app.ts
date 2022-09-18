@@ -2,11 +2,11 @@ import express, { ErrorRequestHandler } from "express";
 import rateLimit from "express-rate-limit";
 import fileUpload, {UploadedFile} from "express-fileupload";
 import { engine } from "express-handlebars";
+import 'express-async-errors';
 
 import sizelimit from './sizelimit';
 import config from "./config";
 import log from "./log";
-import path from "path";
 import files from "./files";
 
 log.devMode = config.DEVMODE;
@@ -22,7 +22,9 @@ app.engine('.hbs', engine({extname: '.hbs'}));
 app.set('view engine', '.hbs');
 app.set('views', './views');
 app.use(express.json());
-app.use(fileUpload());
+app.use(fileUpload({
+  useTempFiles: true,
+}));
 app.use(express.static('public/'))
 app.set('trust proxy', true);
 
@@ -31,12 +33,6 @@ app.use((req, _res, next) => {
   log.msg(`(${req.method}) ${req.ip} => ${req.path}`);
   next();
 });
-
-app.use(((err, _req, res, _next) => {
-  log.error(err);
-  res.status(err.status ?? 500);
-  res.end();
-}) as ErrorRequestHandler);
 
 app.get("/", (_req, res) => res.render("index", { used: sizelimit.percentageUsed() }));
 app.get("/upload", (_req, res) => res.render("index", { used: sizelimit.percentageUsed()}));
@@ -53,15 +49,16 @@ app.get("/upload/ratelimit", (req, res) => {
   res.render("ratelimit")
 });
 
-app.get("/upload/:id", async (req, res) => {
-  const link = await files.downloadLink(req.params.id);
-  if (link) {
-    res.download(link);
-    log.msg(`Downloading ${link}`);
-    return;
-  }
-  log.warn(`COULDN'T FIND ${req.params.id}`);
-  res.redirect(`/upload/nofile?id=${req.params.id}`);
+app.get("/download/:id", async (req, res) => {
+    const filename = await files.nameOf(req.params.id) ?? req.params.id;
+    files.downloadLink(req.params.id, (path) => {
+      log.msg(`Downloading ${path}`);
+      res.download(path, filename);
+    }).catch((e) => {
+      log.error(e);
+      log.warn(`COULDN'T FIND ${filename ?? req.params.id}`);
+      res.redirect(`/upload/nofile?id=${filename ?? req.params.id}`);
+    });
 });
 
 function msToFormattedString(msSinceEpoch: number): string {
@@ -79,7 +76,7 @@ app.get("/uploads", async (req, res) => {
     hasPrevious: page > 0,
     previous: page-1,
     next: page+1,
-    files: (await files.public(page)).map((row) => {
+    files: (await files.getPublic(page)).map((row) => {
       return {
         filename: row.filename,
         id: row.id,
@@ -102,13 +99,20 @@ app.post("/upload", async (req, res) => {
     log.msg(`${req.ip} has uploaded ${file.size/1024}MB (${sizelimit.percentageUsed()})`);
 
     // Save file to Database and upload it to Storage
-    const id = await files.save(file.name, file.tempFilePath, req.body.isPublic);
+    const id = await files.saveAs(file.name, file.tempFilePath, req.body.isPublic);
     log.msg(`UPLOADED ${req.body.isPublic ? 'PUBLIC' : 'PRIVATE'} FILE: ${file.name} -> ${id}`);
-    res.render("index", { url: `/upload/${id}`, used: sizelimit.percentageUsed() });
+    res.render("index", { url: `/download/${id}`, used: sizelimit.percentageUsed() });
   } else {
     res.redirect("/upload/ratelimit");
   }
 });
+
+// global error handler
+app.use(((err, _req, res, _next) => {
+  log.error(err);
+  res.status(err.status ?? 500);
+  res.end();
+}) as ErrorRequestHandler);
 
 const PORT = config.PORT;
 app.listen(PORT, () => {
