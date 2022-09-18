@@ -44,7 +44,7 @@ class Files {
             yield (yield this.db).run("CREATE TABLE files (id TEXT NOT NULL, filename TEXT NOT NULL, uploaded INTEGER NOT NULL, isPublic BOOLEAN NOT NULL CHECK (isPublic IN (0, 1)))");
         });
     }
-    saveAs(path, filename, isPublic) {
+    saveAs(filename, path, isPublic) {
         return __awaiter(this, void 0, void 0, function* () {
             const id = (0, uuid_1.v4)();
             (yield this.db).run("INSERT INTO files VALUES (?, ?, ?, ?)", [id, filename, Date.now(), isPublic ? 1 : 0]);
