@@ -14,14 +14,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
 const express_1 = __importDefault(require("express"));
-const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
+require("express-async-errors");
 const express_fileupload_1 = __importDefault(require("express-fileupload"));
 const express_handlebars_1 = require("express-handlebars");
-require("express-async-errors");
-const sizelimit_1 = __importDefault(require("./sizelimit"));
+const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
+const fs_1 = __importDefault(require("fs"));
+const https_1 = __importDefault(require("https"));
 const config_1 = __importDefault(require("./config"));
-const log_1 = __importDefault(require("./log"));
 const files_1 = __importDefault(require("./files"));
+const log_1 = __importDefault(require("./log"));
+const sizelimit_1 = __importDefault(require("./sizelimit"));
 log_1.default.devMode = config_1.default.DEVMODE;
 const limiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000,
@@ -120,7 +122,10 @@ exports.app.use(((err, _req, res, _next) => {
     res.end();
 }));
 const PORT = config_1.default.PORT;
-exports.app.listen(PORT, () => {
-    log_1.default.msg(`sharekitten running on ${PORT}`);
+https_1.default.createServer({
+    key: fs_1.default.readFileSync("server.key"),
+    cert: fs_1.default.readFileSync("server.cert"),
+}, exports.app).listen(PORT, () => {
+    log_1.default.msg(`sharekitten running on ${PORT} with HTTPS`);
 });
 //# sourceMappingURL=app.js.map

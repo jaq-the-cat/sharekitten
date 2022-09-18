@@ -6,7 +6,7 @@
   "scripts": {
     "debug": "NODE_ENV=development tsc-watch --onSuccess \"nodemon dist/app.js\"",
     "deploy": "tsc",
-    "start": "NODE_ENV=production PORT=80 node dist/app.js",
+    "start": "NODE_ENV=production PORT=443 node dist/app.js",
     "db-reset": "tsc && node dist/dbi.js reset",
     "db-clear": "tsc && node dist/dbi.js clear"
   },
