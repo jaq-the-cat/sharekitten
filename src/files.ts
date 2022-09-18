@@ -35,7 +35,7 @@ class Files {
     await (await this.db).run("CREATE TABLE files (id TEXT NOT NULL, filename TEXT NOT NULL, uploaded INTEGER NOT NULL, isPublic BOOLEAN NOT NULL CHECK (isPublic IN (0, 1)))");
   }
 
-  async saveAs(path: string, filename: string, isPublic: boolean): Promise<string> {
+  async saveAs(filename: string, path: string, isPublic: boolean): Promise<string> {
     const id = uuidv4();
     (await this.db).run("INSERT INTO files VALUES (?, ?, ?, ?)", [id, filename, Date.now(), isPublic ? 1 : 0]);
     this.bucket.upload(path, {
