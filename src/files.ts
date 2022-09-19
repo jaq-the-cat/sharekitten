@@ -50,7 +50,7 @@ class Files {
       destination,
     });
     callback(destination);
-    fs.unlink(id, (err) => {
+    fs.unlink(destination, (err) => {
       if (err) log.error(err);
       log.msg(`Deleted temporary file ${destination}`);
     });
