@@ -5,10 +5,13 @@
   "license": "MIT",
   "scripts": {
     "debug": "NODE_ENV=development tsc-watch --onSuccess \"nodemon dist/app.js\"",
+    "prod-debug": "NODE_ENV=production PORT=443 node dist/app.js",
     "deploy": "tsc",
     "start": "NODE_ENV=production PORT=443 yarn run pm2 start dist/app.js",
-    "db-reset": "tsc && node dist/dbi.js reset",
-    "db-clear": "tsc && node dist/dbi.js clear"
+    "db-reset": "tsc && NODE_ENV=development node dist/dbi.js reset",
+    "db-clear": "tsc && NODE_ENV=development node dist/dbi.js clear",
+    "prod-db-reset": "tsc && NODE_ENV=production node dist/dbi.js reset",
+    "prod-db-clear": "tsc && NODE_ENV=production node dist/dbi.js clear"
   },
   "dependencies": {
     "@google-cloud/storage": "^6.4.2",

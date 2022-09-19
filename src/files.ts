@@ -38,8 +38,10 @@ class Files {
   async saveAs(filename: string, path: string, isPublic: boolean): Promise<string> {
     const id = uuidv4();
     (await this.db).run("INSERT INTO files VALUES (?, ?, ?, ?)", [id, filename, Date.now(), isPublic ? 1 : 0]);
-    this.bucket.upload(path, {
+    await this.bucket.upload(path, {
       destination: id,
+    }).catch((e) => {
+      log.error(e);
     });
     return id;
   }

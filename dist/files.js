@@ -48,8 +48,10 @@ class Files {
         return __awaiter(this, void 0, void 0, function* () {
             const id = (0, uuid_1.v4)();
             (yield this.db).run("INSERT INTO files VALUES (?, ?, ?, ?)", [id, filename, Date.now(), isPublic ? 1 : 0]);
-            this.bucket.upload(path, {
+            yield this.bucket.upload(path, {
                 destination: id,
+            }).catch((e) => {
+                log_1.default.error(e);
             });
             return id;
         });
@@ -61,7 +63,7 @@ class Files {
                 destination,
             });
             callback(destination);
-            fs_1.default.unlink(id, (err) => {
+            fs_1.default.unlink(destination, (err) => {
                 if (err)
                     log_1.default.error(err);
                 log_1.default.msg(`Deleted temporary file ${destination}`);
