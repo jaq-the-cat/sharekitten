@@ -80,18 +80,21 @@ function msToFormattedString(msSinceEpoch) {
 exports.app.get("/uploads", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const rPage = req.query.page;
     const page = rPage ? Number.parseInt(rPage) : 0;
+    const publicFiles = yield files_1.default.getPublic(page);
+    const filesFormatted = yield Promise.all(publicFiles.map((row) => __awaiter(void 0, void 0, void 0, function* () {
+        const [metadata] = yield row.getMetadata();
+        return {
+            filename: metadata.SKname,
+            id: row.id,
+            uploaded: msToFormattedString(metadata.SKuploaded),
+        };
+    })));
     res.render("publicfiles", {
         page: page,
         hasPrevious: page > 0,
         previous: page - 1,
         next: page + 1,
-        files: (yield files_1.default.getPublic(page)).map((row) => {
-            return {
-                filename: row.filename,
-                id: row.id,
-                uploaded: msToFormattedString(row.uploaded),
-            };
-        }),
+        files: filesFormatted,
     });
 }));
 exports.app.post("/upload", (req, res) => __awaiter(void 0, void 0, void 0, function* () {

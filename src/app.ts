@@ -73,18 +73,21 @@ function msToFormattedString(msSinceEpoch: number): string {
 app.get("/uploads", async (req, res) => {
   const rPage = req.query.page;
   const page = rPage ? Number.parseInt(rPage as string) : 0;
+  const publicFiles = await files.getPublic(page);
+  const filesFormatted = await Promise.all(publicFiles.map(async row => {
+    const [metadata] = await row.getMetadata();
+    return {
+      filename: metadata.SKname,
+      id: row.id,
+      uploaded: msToFormattedString(metadata.SKuploaded),
+    };
+  }));
   res.render("publicfiles", {
     page: page,
     hasPrevious: page > 0,
     previous: page-1,
     next: page+1,
-    files: (await files.getPublic(page)).map((row) => {
-      return {
-        filename: row.filename,
-        id: row.id,
-        uploaded: msToFormattedString(row.uploaded),
-      };
-    }),
+    files: filesFormatted,
   });
 });
 
