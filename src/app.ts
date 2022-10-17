@@ -124,9 +124,15 @@ app.use(((err, _req, res, _next) => {
 }) as ErrorRequestHandler);
 
 const PORT = config.PORT;
-https.createServer({
-  key: fs.readFileSync("server.key"),
-  cert: fs.readFileSync("server.cert"),
-}, app).listen(PORT, () => {
-  log.msg(`sharekitten running on ${PORT} with HTTPS`);
-});
+if (config.DEVMODE) {
+  app.listen(PORT, () => {
+    log.msg(`sharekitten running with HTTP on ${PORT} in Debug Mode`);
+  });
+} else {
+  https.createServer({
+    key: fs.readFileSync("server.key"),
+    cert: fs.readFileSync("server.cert"),
+  }, app).listen(PORT, () => {
+    log.msg(`sharekitten running with HTTPS on ${PORT}`);
+  });
+}

@@ -130,10 +130,17 @@ exports.app.use(((err, _req, res, _next) => {
     res.end();
 }));
 const PORT = config_1.default.PORT;
-https_1.default.createServer({
-    key: fs_1.default.readFileSync("server.key"),
-    cert: fs_1.default.readFileSync("server.cert"),
-}, exports.app).listen(PORT, () => {
-    log_1.default.msg(`sharekitten running on ${PORT} with HTTPS`);
-});
+if (config_1.default.DEVMODE) {
+    exports.app.listen(PORT, () => {
+        log_1.default.msg(`sharekitten running with HTTP on ${PORT} in Debug Mode`);
+    });
+}
+else {
+    https_1.default.createServer({
+        key: fs_1.default.readFileSync("server.key"),
+        cert: fs_1.default.readFileSync("server.cert"),
+    }, exports.app).listen(PORT, () => {
+        log_1.default.msg(`sharekitten running with HTTPS on ${PORT}`);
+    });
+}
 //# sourceMappingURL=app.js.map
