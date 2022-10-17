@@ -8,15 +8,13 @@ Page {{ page }}
 </span>
 <table class="files">
   <tr class="header">
-    <th class="filename">Filename</th>
-    <th class="link">Link</th>
+    <th class="file">File</th>
     <th class="uploaded">Uploaded on</th>
   </tr>
   <tr class="table-sep"></tr>
   {{#each files}}
   <tr>
-    <td title="{{this.filename}}">{{this.filename}}</td>
-    <td title="{{this.id}}" class="link-cell"><a href="/download/{{this.id}}">/download/{{this.id}}</a></td>
+    <td title="{{this.filename}}" class="link-cell"><a href="/download/{{this.id}}">{{this.filename}}</a></td>
     <td>{{this.uploaded}}</td>
   </tr>
   {{/each}}

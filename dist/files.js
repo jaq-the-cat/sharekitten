@@ -12,7 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs_1 = __importDefault(require("fs"));
 const uuid_1 = require("uuid");
 //import fs from "fs";
 const storage_1 = require("@google-cloud/storage");
@@ -37,13 +36,14 @@ class Files {
             yield this.bucket.upload(path, {
                 destination: id,
                 metadata: {
-                    "x-goog-meta-SKname": filename,
-                    "x-goog-meta-SKuploaded": Date.now(),
+                    metadata: {
+                        "SKname": filename,
+                        "SKuploaded": Date.now(),
+                    }
                 }
             }).catch((e) => {
                 log_1.default.error(e);
             });
-            console.log(yield this.bucket.file(id).getMetadata());
             return id;
         });
     }
@@ -54,16 +54,11 @@ class Files {
                 destination,
             });
             callback(destination);
-            fs_1.default.unlink(destination, (err) => {
-                if (err)
-                    log_1.default.error(err);
-                log_1.default.msg(`Deleted temporary file ${destination}`);
-            });
         });
     }
     nameOf(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.bucket.file(id).getMetadata())[0].SKname;
+            return (yield this.bucket.file(id).getMetadata())[0].metadata.SKname;
         });
     }
     getPublic(page) {
@@ -72,6 +67,9 @@ class Files {
                 prefix: "P",
             });
             const ffIndex = page * config_1.default.PERPAGE; // index of the first file in the page (page 0 * 20 = element 0; page 1 * 20 = element 20; page 2 * 20 = element 40, ...)
+            files.forEach((file) => {
+                console.log(file.metadata.metadata);
+            });
             return files.slice(ffIndex, ffIndex + config_1.default.PERPAGE - 1); // dont include last item because it's also on the next page
         });
     }

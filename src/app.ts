@@ -55,7 +55,12 @@ app.get("/download/:id", async (req, res) => {
     const filename = await files.nameOf(req.params.id) ?? req.params.id;
     files.downloadLink(req.params.id, (path) => {
       log.msg(`Downloading ${path}`);
-      res.download(path, filename);
+      res.download(path, filename, {}, (_) => {
+        fs.unlink(path, (err) => {
+          if (err) log.error(err);
+          log.msg(`Deleted temporary file ${path}`);
+        });
+      });
     }).catch((e) => {
       log.error(e);
       log.warn(`COULDN'T FIND ${filename ?? req.params.id}`);
@@ -63,8 +68,8 @@ app.get("/download/:id", async (req, res) => {
     });
 });
 
-function msToFormattedString(msSinceEpoch: number): string {
-  const d = new Date(msSinceEpoch);
+function msToFormattedString(msSinceEpoch: string): string {
+  const d = new Date(Number.parseInt(msSinceEpoch));
   const date = `${d.getUTCFullYear().toString().padStart(4, '0')}-${d.getUTCMonth().toString().padStart(2, '0')}-${d.getUTCDate().toString().padStart(2, '0')}`;
   const time = ` ${d.getUTCHours().toString().padStart(2, '0')}:${d.getUTCMinutes().toString().padStart(2, '0')}`;
   return `${date} ${time}`;
@@ -74,14 +79,13 @@ app.get("/uploads", async (req, res) => {
   const rPage = req.query.page;
   const page = rPage ? Number.parseInt(rPage as string) : 0;
   const publicFiles = await files.getPublic(page);
-  const filesFormatted = await Promise.all(publicFiles.map(async row => {
-    const [metadata] = await row.getMetadata();
+  const filesFormatted = publicFiles.map(row => {
     return {
-      filename: metadata.SKname,
+      filename: row.metadata.metadata.SKname,
       id: row.id,
-      uploaded: msToFormattedString(metadata.SKuploaded),
+      uploaded: msToFormattedString(row.metadata.metadata.SKuploaded),
     };
-  }));
+  });
   res.render("publicfiles", {
     page: page,
     hasPrevious: page > 0,

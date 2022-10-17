@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Post Void
+Comment=Play this game on Steam
+Exec=steam steam://rungameid/1285670
+Icon=steam_icon_1285670
+Terminal=false
+Type=Application
+Categories=Game;

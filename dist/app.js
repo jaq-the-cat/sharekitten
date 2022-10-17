@@ -64,7 +64,13 @@ exports.app.get("/download/:id", (req, res) => __awaiter(void 0, void 0, void 0,
     const filename = (_a = yield files_1.default.nameOf(req.params.id)) !== null && _a !== void 0 ? _a : req.params.id;
     files_1.default.downloadLink(req.params.id, (path) => {
         log_1.default.msg(`Downloading ${path}`);
-        res.download(path, filename);
+        res.download(path, filename, {}, (_) => {
+            fs_1.default.unlink(path, (err) => {
+                if (err)
+                    log_1.default.error(err);
+                log_1.default.msg(`Deleted temporary file ${path}`);
+            });
+        });
     }).catch((e) => {
         log_1.default.error(e);
         log_1.default.warn(`COULDN'T FIND ${filename !== null && filename !== void 0 ? filename : req.params.id}`);
@@ -72,7 +78,7 @@ exports.app.get("/download/:id", (req, res) => __awaiter(void 0, void 0, void 0,
     });
 }));
 function msToFormattedString(msSinceEpoch) {
-    const d = new Date(msSinceEpoch);
+    const d = new Date(Number.parseInt(msSinceEpoch));
     const date = `${d.getUTCFullYear().toString().padStart(4, '0')}-${d.getUTCMonth().toString().padStart(2, '0')}-${d.getUTCDate().toString().padStart(2, '0')}`;
     const time = ` ${d.getUTCHours().toString().padStart(2, '0')}:${d.getUTCMinutes().toString().padStart(2, '0')}`;
     return `${date} ${time}`;
@@ -81,14 +87,13 @@ exports.app.get("/uploads", (req, res) => __awaiter(void 0, void 0, void 0, func
     const rPage = req.query.page;
     const page = rPage ? Number.parseInt(rPage) : 0;
     const publicFiles = yield files_1.default.getPublic(page);
-    const filesFormatted = yield Promise.all(publicFiles.map((row) => __awaiter(void 0, void 0, void 0, function* () {
-        const [metadata] = yield row.getMetadata();
+    const filesFormatted = publicFiles.map(row => {
         return {
-            filename: metadata.SKname,
+            filename: row.metadata.metadata.SKname,
             id: row.id,
-            uploaded: msToFormattedString(metadata.SKuploaded),
+            uploaded: msToFormattedString(row.metadata.metadata.SKuploaded),
         };
-    })));
+    });
     res.render("publicfiles", {
         page: page,
         hasPrevious: page > 0,

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Cyber Hook
+Comment=Play this game on Steam
+Exec=steam steam://rungameid/1130410
+Icon=steam_icon_1130410
+Terminal=false
+Type=Application
+Categories=Game;
