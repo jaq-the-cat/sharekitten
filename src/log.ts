@@ -12,23 +12,23 @@ class Logger {
   msg(s: any): void {
     console.log(`[MSG] ${s}`);
     if (!this.devMode) {
-      //fs.appendFileSync(this.logFile, `${s}`);
+      fs.appendFileSync(this.logFile, `${s}\n`);
     }
   }
 
   warn(s: any): void {
     console.error(`${fgyellow}[WRN]${reset} ${s.toString()}`);
     if (!this.devMode) {
-      //fs.appendFileSync(this.logFile, `${s}`);
-      //fs.appendFileSync(this.errFile, `${s}`);
+      fs.appendFileSync(this.logFile, `${s}\n`);
+      fs.appendFileSync(this.errFile, `${s}\n`);
     }
   }
 
   error(s: any): void {
     console.error(`${fgred}[ERR]${reset} ${s}`);
     if (!this.devMode) {
-      //fs.appendFileSync(this.logFile, `${s}`);
-      //fs.appendFileSync(this.errFile, `${s}`);
+      fs.appendFileSync(this.logFile, `${s}\n`);
+      fs.appendFileSync(this.errFile, `${s}\n`);
     }
   }
 }
