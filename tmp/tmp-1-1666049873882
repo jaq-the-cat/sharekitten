@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=SnowRunner
-Comment=Play this game on Steam
-Exec=steam steam://rungameid/1465360
-Icon=steam_icon_1465360
-Terminal=false
-Type=Application
-Categories=Game;
