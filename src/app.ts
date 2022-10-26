@@ -68,8 +68,8 @@ app.get("/download/:id", async (req, res) => {
     });
 });
 
-function msToFormattedString(msSinceEpoch: string): string {
-  const d = new Date(Number.parseInt(msSinceEpoch));
+function msToFormattedString(msSinceEpoch: number): string {
+  const d = new Date(msSinceEpoch);
   const date = `${d.getUTCFullYear().toString().padStart(4, '0')}-${d.getUTCMonth().toString().padStart(2, '0')}-${d.getUTCDate().toString().padStart(2, '0')}`;
   const time = ` ${d.getUTCHours().toString().padStart(2, '0')}:${d.getUTCMinutes().toString().padStart(2, '0')}`;
   return `${date} ${time}`;
@@ -83,7 +83,7 @@ app.get("/uploads", async (req, res) => {
     return {
       filename: row.metadata.metadata.SKname,
       id: row.id,
-      uploaded: msToFormattedString(row.metadata.metadata.SKuploaded),
+      uploaded: msToFormattedString(Date.parse(row.metadata.timeCreated)),
     };
   });
   res.render("publicfiles", {

@@ -78,7 +78,7 @@ exports.app.get("/download/:id", (req, res) => __awaiter(void 0, void 0, void 0,
     });
 }));
 function msToFormattedString(msSinceEpoch) {
-    const d = new Date(Number.parseInt(msSinceEpoch));
+    const d = new Date(msSinceEpoch);
     const date = `${d.getUTCFullYear().toString().padStart(4, '0')}-${d.getUTCMonth().toString().padStart(2, '0')}-${d.getUTCDate().toString().padStart(2, '0')}`;
     const time = ` ${d.getUTCHours().toString().padStart(2, '0')}:${d.getUTCMinutes().toString().padStart(2, '0')}`;
     return `${date} ${time}`;
@@ -91,7 +91,7 @@ exports.app.get("/uploads", (req, res) => __awaiter(void 0, void 0, void 0, func
         return {
             filename: row.metadata.metadata.SKname,
             id: row.id,
-            uploaded: msToFormattedString(row.metadata.metadata.SKuploaded),
+            uploaded: msToFormattedString(Date.parse(row.metadata.timeCreated)),
         };
     });
     res.render("publicfiles", {

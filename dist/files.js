@@ -38,7 +38,6 @@ class Files {
                 metadata: {
                     metadata: {
                         "SKname": filename,
-                        "SKuploaded": Date.now(),
                     }
                 }
             }).catch((e) => {
